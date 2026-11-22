@@ -5,7 +5,7 @@ export type Tuition={id:string;title:string;subject:string;classLevel:string;mod
 export type Application={id:string;tuitionId:string;tuitionTitle:string;subject:string;monthlyFee:number;tutorName?:string;tutorEmail:string;studentName:string;studentEmail:string;studentPhone:string;preferredSchedule:string;studentNote:string;status:'pending'|'accepted'|'rejected';appliedAt:string};
 export type Payment={id:string;userEmail:string;userName:string;userRole:string;planName:string;amount:number;currency:string;transactionId:string;paidAt:string;paymentStatus:string};
 export type PageResult<T>={items:T[];total:number;page:number;pages:number};
-export const API_URL=(process.env.NEXT_PUBLIC_API_URL||'http://localhost:5000').replace(/\/$/,'');
+export const API_URL=(process.env.NEXT_PUBLIC_API_URL?.trim()||'http://localhost:5000').replace(/\/+$/,'');
 export const formatMoney=(n:number)=>'৳'+Number(n||0).toLocaleString('en-BD');
 export const shortDate=(value:string)=>new Date(value).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 export const fallbackImage='https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&q=80';
