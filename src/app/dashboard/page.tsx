@@ -1,0 +1,2 @@
+'use client';import {useEffect} from 'react';import {useRouter} from 'next/navigation';import {useAuth} from '@/components/Providers';import {Spinner} from '@/components/Elements';
+export default function Dashboard(){const {user,loading}=useAuth(),router=useRouter();useEffect(()=>{if(!loading)router.replace(user?`/dashboard/${user.role}`:'/sign-in?next=/dashboard')},[user,loading,router]);return <div className="dashboard-loading"><Spinner/></div>}
