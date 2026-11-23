@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -11,17 +11,21 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  Copy,
   GraduationCap,
   MapPin,
+  Maximize2,
   MonitorPlay,
   ShieldCheck,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Spinner } from '@/components/Elements';
 import { useAuth } from '@/components/Providers';
+import TuitionCard from '@/components/TuitionCard';
 import { request } from '@/lib/api';
-import { fallbackImage, formatMoney, type Tuition, type User } from '@/lib/types';
+import { fallbackImage, formatMoney, type PageResult, type Tuition, type User } from '@/lib/types';
 
 type TuitionDetails = {
   tuition: Tuition;
@@ -35,11 +39,21 @@ const EXPECTATIONS = [
   'An application reviewed directly by the tutor',
 ];
 
+const TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'lessons', label: 'Lesson details' },
+  { id: 'tutor', label: 'Tutor' },
+] as const;
+
+type DetailTab = typeof TABS[number]['id'];
+
 const sectionHeading =
   'text-[clamp(1.875rem,3.38vw,2.875rem)]! leading-[1.19]! font-bold tracking-[-0.048em]! text-balance';
 const label =
   'text-[11px] leading-4 font-extrabold tracking-[0.1em] text-[#b83e25] uppercase [html.dark_&]:text-[#f5a88b]';
-const copy = 'text-[15px] leading-[1.75] text-[#52677b] [html.dark_&]:text-[var(--muted)]';
+const cardHeading = 'text-[20px]! leading-[1.35]! font-bold tracking-[-0.02em]!';
+const muted = 'text-[#52677b] [html.dark_&]:text-[var(--muted)]';
+const copy = `text-[15px] leading-[1.75] ${muted}`;
 const focus =
   'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--orange)]';
 const button =
@@ -47,7 +61,7 @@ const button =
     px-5 py-2.5 text-center text-sm! font-bold! text-[#24160f]! transition-colors
     hover:bg-[#f47758] disabled:cursor-not-allowed ${focus}`;
 const field =
-  'w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2.5 text-[15px]! placeholder:text-[var(--muted)] focus:border-[var(--orange)] focus:outline-none';
+  'w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2.5 text-[15px]! font-normal! placeholder:text-[var(--muted)] focus:border-[var(--orange)] focus:outline-none';
 
 function ApplicationPanel({
   tuition,
@@ -87,27 +101,8 @@ function ApplicationPanel({
   }
 
   return (
-    <aside
-      aria-labelledby="application-title"
-      className="self-start rounded-[24px] border border-[var(--border)] bg-[var(--card)]
-        p-5 shadow-[0_15px_50px_rgba(17,25,20,0.07)] sm:p-7 lg:sticky lg:top-24"
-    >
-      <div className="border-b border-[var(--border)] pb-5">
-        <p className={label}>Monthly tuition</p>
-        <p className="mt-2! flex flex-wrap items-baseline gap-2">
-          <strong className="text-[clamp(2.125rem,4vw,2.75rem)] leading-none font-extrabold tracking-[-0.055em] [font-family:Manrope,sans-serif]">
-            {formatMoney(tuition.monthlyFee)}
-          </strong>
-          <span className={`text-sm ${copy}`}>/ month</span>
-        </p>
-      </div>
-
-      <h2
-        id="application-title"
-        className="mt-5! text-xl! leading-[1.35]! font-bold tracking-[-0.025em]! sm:text-[24px]!"
-      >
-        Apply for this tuition
-      </h2>
+    <section id="apply" aria-labelledby="application-title" className="scroll-mt-24 border-t border-[var(--border)] pt-8">
+      <h2 id="application-title" className={sectionHeading}>Apply for this tuition</h2>
 
       {authLoading ? (
         <p role="status" className={`mt-3! ${copy}`}>Checking your sign-in status…</p>
@@ -115,10 +110,7 @@ function ApplicationPanel({
         <div className="mt-3 space-y-4">
           <p className={copy}>Sign in as a student to send an application.</p>
           <Link
-            href={{
-              pathname: '/sign-in',
-              query: { next: `/tuitions/${encodeURIComponent(tuition.id)}` },
-            }}
+            href={signInHref(tuition.id)}
             className={`w-full ${button}`}
           >
             Sign in to apply <ArrowUpRight size={16} aria-hidden="true" />
@@ -183,13 +175,13 @@ function ApplicationPanel({
             {status === 'sending' ? 'Sending…' : 'Apply for this tuition'}
             <ArrowUpRight size={16} aria-hidden="true" />
           </button>
-          <p className={`flex items-start gap-2 text-sm ${copy}`}>
+          <p className={`flex items-start gap-2 text-sm leading-6 ${muted}`}>
             <ShieldCheck size={17} aria-hidden="true" className="mt-0.5 shrink-0 text-[var(--orange)]" />
             Your tutor can see the contact details you submit.
           </p>
         </form>
       )}
-    </aside>
+    </section>
   );
 }
 
@@ -197,6 +189,7 @@ function TuitionDetailsView({ id }: { id: string }) {
   const { user, token, loading: authLoading } = useAuth();
   const [details, setDetails] = useState<TuitionDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<DetailTab>('overview');
 
   useEffect(() => {
     const controller = new AbortController();
@@ -259,108 +252,185 @@ function TuitionDetailsView({ id }: { id: string }) {
     { name: 'Location', value: tuition.location, icon: MapPin },
   ];
 
+  function moveTab(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number;
+
+    switch (event.key) {
+      case 'ArrowRight':
+        nextIndex = (index + 1) % TABS.length;
+        break;
+      case 'ArrowLeft':
+        nextIndex = (index + TABS.length - 1) % TABS.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = TABS.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    const nextTab = TABS[nextIndex].id;
+    setActiveTab(nextTab);
+    document.getElementById(`tuition-tab-${nextTab}`)?.focus();
+  }
+
   return (
     <main className="bg-[var(--paper)] text-[var(--ink)]">
-      {/* Tuition photo and heading */}
+      {/* Tuition title */}
       <section
         aria-labelledby="tuition-title"
-        className="relative isolate grid min-h-[300px] place-items-center overflow-hidden
-          bg-[var(--deep)] pt-10 pb-[4.5rem] sm:min-h-[360px] lg:min-h-[420px]"
+        className="flex min-h-[260px] items-center bg-[#202427]
+          bg-[radial-gradient(ellipse_at_14%_0%,#383d41,transparent_68%),linear-gradient(130deg,#24282b,#191d20)]
+          py-12 text-white sm:min-h-[320px] sm:py-16"
       >
-        <Image
-          src={tuition.bannerImage || fallbackImage}
-          alt=""
-          fill
-          unoptimized
-          preload
-          className="object-cover object-center"
-        />
-        <div aria-hidden="true" className="absolute inset-0 bg-black/60" />
-        <div className="container relative text-center text-white">
-          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center justify-center gap-2 text-[11px] leading-4 font-extrabold tracking-[0.1em]">
+        <div className="container">
+          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-[11px] leading-4 font-extrabold tracking-[0.1em] uppercase">
             <Link href="/" className={`rounded-sm hover:text-[#ffd3c3] ${focus}`}>Home</Link>
             <ChevronRight size={14} aria-hidden="true" />
             <Link href="/tuitions" className={`rounded-sm hover:text-[#ffd3c3] ${focus}`}>Browse Tuitions</Link>
             <ChevronRight size={14} aria-hidden="true" />
-            <span aria-current="page">{tuition.subject}</span>
+            <span aria-current="page" className="text-white/75">{tuition.subject}</span>
           </nav>
           <h1
             id="tuition-title"
-            className="mx-auto! max-w-[1000px] text-[clamp(2.125rem,8.5vw,3.5rem)] leading-[1.05]!
+            className="max-w-[900px] text-[clamp(2.125rem,8.5vw,3.5rem)] leading-[1.05]!
               font-extrabold tracking-[-0.048em]! text-balance wrap-break-word
               lg:text-[clamp(3rem,5vw,4.25rem)]"
           >
             {tuition.title}
           </h1>
-          <p className="mt-4! text-[15px] leading-[1.75] text-white/90">
-            Guided by {tutorName} · {tuition.classLevel}
-          </p>
         </div>
       </section>
 
-      {/* Mentorship details and application */}
-      <section
-        aria-label="Mentorship details"
-        className="relative -mt-12 rounded-t-[2.75rem] bg-[var(--paper)] pt-16 pb-16
-          sm:rounded-t-[4rem] sm:pt-24 sm:pb-24 lg:pt-28 lg:pb-28"
-      >
-        <div className="container grid items-start gap-9 lg:grid-cols-[minmax(0,1fr)_minmax(320px,370px)] lg:gap-10 xl:gap-14">
-          <div className="min-w-0 space-y-8 sm:space-y-10">
-            <dl className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-              {facts.map(({ name, value, icon: Icon }) => (
-                <div key={name} className="min-w-0 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 sm:p-4">
-                  <Icon size={21} strokeWidth={1.65} aria-hidden="true" className="mb-3 text-[var(--orange)]" />
-                  <dt className={label}>{name}</dt>
-                  <dd className="mt-1 text-sm leading-snug font-bold wrap-break-word">{value}</dd>
-                </div>
-              ))}
+      {/* Tuition information, preview and application */}
+      <section aria-label="Mentorship details" className="py-12 sm:py-16 lg:py-20">
+        <div className="container grid items-start gap-x-12 gap-y-9
+          lg:grid-cols-[minmax(0,1fr)_minmax(300px,350px)] lg:gap-y-12 xl:gap-x-16">
+          <div className="min-w-0">
+            <dl className="flex flex-wrap items-center gap-x-7 gap-y-4 border-b border-[var(--border)] pb-6 sm:gap-x-10">
+              <div className="relative flex min-h-12 flex-col justify-center pl-15">
+                <dt className={label}>Tutor</dt>
+                <dd className="mt-1 text-sm font-bold">
+                  <div className="absolute top-1/2 left-0 -translate-y-1/2">
+                    <TutorAvatar name={tutorName} image={tutor?.image} />
+                  </div>
+                  {tutorName}
+                </dd>
+              </div>
+              <div>
+                <dt className={label}>Subject</dt>
+                <dd className="mt-1 text-sm font-bold">
+                  <Link href={subjectHref(tuition.subject)} className={`rounded-sm hover:underline ${focus}`}>
+                    {tuition.subject}
+                  </Link>
+                </dd>
+              </div>
+              <div>
+                <dt className={label}>Class level</dt>
+                <dd className="mt-1 text-sm font-bold">{tuition.classLevel}</dd>
+              </div>
             </dl>
 
-            <article aria-labelledby="overview-title">
-              <h2 id="overview-title" className={sectionHeading}>About this tuition</h2>
-              <p className={`mt-4! whitespace-pre-line wrap-break-word ${copy}`}>
-                {tuition.description}
-              </p>
-            </article>
+            <div role="tablist" aria-label="Tuition information" className="mt-5 flex flex-wrap gap-2">
+              {TABS.map(({ id, label: tabLabel }, index) => (
+                <button
+                  key={id}
+                  id={`tuition-tab-${id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === id}
+                  aria-controls={`tuition-panel-${id}`}
+                  tabIndex={activeTab === id ? 0 : -1}
+                  onClick={() => setActiveTab(id)}
+                  onKeyDown={event => moveTab(event, index)}
+                  className={`inline-flex min-h-10 items-center rounded-full border border-[var(--border)]
+                    px-4 text-sm! font-bold! transition-colors hover:border-[var(--orange)] sm:px-6
+                    aria-selected:border-[var(--orange)] aria-selected:bg-[var(--orange)]
+                    aria-selected:text-[#24160f] ${focus}`}
+                >
+                  {tabLabel}
+                </button>
+              ))}
+            </div>
 
-            <article aria-labelledby="expectations-title">
-              <h2 id="expectations-title" className={sectionHeading}>What to expect</h2>
-              <ul className="mt-4 space-y-3">
-                {EXPECTATIONS.map(text => (
-                  <li key={text} className={`flex items-start gap-2.5 ${copy}`}>
-                    <CheckCircle2 size={19} aria-hidden="true" className="mt-1 shrink-0 text-[var(--orange)]" />
-                    {text}
-                  </li>
-                ))}
-              </ul>
-            </article>
-
-            <article
-              aria-labelledby="tutor-title"
-              className="flex items-start gap-4 rounded-[24px] border border-[var(--border)]
-                bg-[var(--cream)] p-4 sm:gap-5 sm:p-6"
+            <div
+              id="tuition-panel-overview"
+              role="tabpanel"
+              aria-labelledby="tuition-tab-overview"
+              tabIndex={0}
+              hidden={activeTab !== 'overview'}
+              className={`mt-8 space-y-8 rounded-sm ${focus}`}
             >
-              <div className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-full bg-[var(--orange)]/15 text-xl font-extrabold text-[#b83e25] sm:size-[72px] [html.dark_&]:text-[#f5a88b]">
-                {tutor?.image ? (
-                  <Image src={tutor.image} alt="" fill unoptimized className="object-cover" />
-                ) : (
-                  <span aria-hidden="true">{tutorName[0]?.toUpperCase()}</span>
-                )}
+              <div>
+                <h2 className={sectionHeading}>About this tuition</h2>
+                <p className={`mt-4! whitespace-pre-line wrap-break-word ${copy}`}>
+                  {tuition.description}
+                </p>
               </div>
-              <div className="min-w-0">
-                <p className={label}>Meet your mentor</p>
-                <h2 id="tutor-title" className="mt-1! text-xl! leading-[1.35]! font-bold tracking-[-0.02em]! wrap-break-word">
-                  {tutorName}
-                </h2>
-                {tutor?.bio && <p className={`mt-2! wrap-break-word ${copy}`}>{tutor.bio}</p>}
-                {tutor?.plan === 'pro' && (
-                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--paper)] px-3 py-1 text-xs font-bold">
-                    <ShieldCheck size={15} aria-hidden="true" className="text-[var(--orange)]" /> Pro tutor
-                  </span>
-                )}
+              <div>
+                <h3 className={cardHeading}>What to expect</h3>
+                <ul className="mt-4 space-y-3">
+                  {EXPECTATIONS.map(text => (
+                    <li key={text} className={`flex items-start gap-2.5 ${copy}`}>
+                      <CheckCircle2 size={19} aria-hidden="true" className="mt-1 shrink-0 text-[var(--orange)]" />
+                      {text}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </article>
+            </div>
+
+            <div
+              id="tuition-panel-lessons"
+              role="tabpanel"
+              aria-labelledby="tuition-tab-lessons"
+              tabIndex={0}
+              hidden={activeTab !== 'lessons'}
+              className={`mt-8 rounded-sm ${focus}`}
+            >
+              <h2 className={sectionHeading}>Lesson details</h2>
+              <dl className="mt-5 grid grid-cols-2 gap-3">
+                {facts.map(({ name, value, icon: Icon }) => (
+                  <div key={name} className="min-w-0 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-3.5 sm:p-4">
+                    <dt className={label}>
+                      <Icon size={21} aria-hidden="true" className="mb-3 text-[var(--orange)]" />
+                      {name}
+                    </dt>
+                    <dd className="mt-1 text-sm leading-snug font-bold wrap-break-word">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <div
+              id="tuition-panel-tutor"
+              role="tabpanel"
+              aria-labelledby="tuition-tab-tutor"
+              tabIndex={0}
+              hidden={activeTab !== 'tutor'}
+              className={`mt-8 rounded-sm ${focus}`}
+            >
+              <h2 className={sectionHeading}>Meet your mentor</h2>
+              <article className="mt-5 flex items-start gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--cream)] p-4 sm:p-6">
+                <TutorAvatar name={tutorName} image={tutor?.image} />
+                <div className="min-w-0">
+                  <h3 className={`wrap-break-word ${cardHeading}`}>{tutorName}</h3>
+                  {tutor?.bio && <p className={`mt-2! wrap-break-word ${copy}`}>{tutor.bio}</p>}
+                  {tutor?.plan === 'pro' && (
+                    <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[var(--paper)] px-3 py-1 text-xs font-bold">
+                      <ShieldCheck size={15} aria-hidden="true" className="text-[var(--orange)]" /> Pro tutor
+                    </span>
+                  )}
+                </div>
+              </article>
+            </div>
           </div>
+
+          <TuitionPreview tuition={tuition} tutorName={tutorName} user={user} token={token} authLoading={authLoading} />
 
           <ApplicationPanel
             key={user?.id}
@@ -371,7 +441,207 @@ function TuitionDetailsView({ id }: { id: string }) {
           />
         </div>
       </section>
+
+      <RelatedTuitions tuitionId={tuition.id} subject={tuition.subject} />
     </main>
+  );
+}
+
+function subjectHref(subject: string) {
+  return `/tuitions?subject=${encodeURIComponent(subject)}`;
+}
+
+function signInHref(id: string) {
+  return {
+    pathname: '/sign-in',
+    query: { next: `/tuitions/${encodeURIComponent(id)}` },
+  };
+}
+
+function TutorAvatar({ name, image }: { name: string; image?: string }) {
+  return (
+    <div className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-full
+      bg-[var(--orange)]/15 text-lg font-extrabold text-[#b83e25] [html.dark_&]:text-[#f5a88b]">
+      {image ? (
+        <Image src={image} alt="" fill unoptimized className="object-cover" />
+      ) : (
+        <span aria-hidden="true">{name[0]?.toUpperCase()}</span>
+      )}
+    </div>
+  );
+}
+
+function TuitionPreview({
+  tuition,
+  tutorName,
+  user,
+  token,
+  authLoading,
+}: {
+  tuition: Tuition;
+  tutorName: string;
+  user: User | null;
+  token: string | null;
+  authLoading: boolean;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [shareUrl, setShareUrl] = useState('');
+  const image = tuition.bannerImage || fallbackImage;
+
+  async function copyLink() {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareUrl('');
+      toast.success('Tuition link copied.');
+    } catch {
+      setShareUrl(url);
+    }
+  }
+
+  return (
+    <aside aria-labelledby="preview-title" className="self-start rounded-[24px] border border-[var(--border)]
+      bg-[var(--card)] p-5 sm:p-6 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+      <button
+        type="button"
+        aria-label="View tuition photo"
+        aria-haspopup="dialog"
+        onClick={() => dialog.current?.showModal()}
+        className={`group relative block aspect-[4/3] w-full overflow-hidden rounded-[18px] bg-[var(--cream)] ${focus}`}
+      >
+        <Image src={image} alt="" fill unoptimized className="object-cover" />
+        <span className="absolute right-3 bottom-3 grid size-10 place-items-center rounded-full
+          bg-white text-[#202427] transition-colors group-hover:bg-[var(--orange)]">
+          <Maximize2 size={17} aria-hidden="true" />
+        </span>
+      </button>
+
+      <dialog
+        ref={dialog}
+        aria-labelledby="tuition-photo-title"
+        className="fixed inset-0 m-auto w-[min(94vw,900px)] max-w-none overflow-hidden rounded-[24px]
+          border border-[var(--border)] bg-[var(--card)] p-0 text-[var(--ink)] backdrop:bg-black/70"
+      >
+        <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-5">
+          <h2 id="tuition-photo-title" className="text-lg! font-bold">Tuition photo</h2>
+          <form method="dialog">
+            <button type="submit" aria-label="Close photo" className={`grid size-9 place-items-center rounded-full bg-[var(--cream)] ${focus}`}>
+              <X size={18} aria-hidden="true" />
+            </button>
+          </form>
+        </div>
+        <div className="relative h-[min(70vh,580px)] bg-[#202427]">
+          <Image src={image} alt={`${tuition.subject} tuition photo`} fill unoptimized className="object-contain" />
+        </div>
+      </dialog>
+
+      <h2 id="preview-title" className={`mt-5! ${cardHeading}`}>Tuition summary</h2>
+      <dl className="mt-3 divide-y divide-[var(--border)] text-sm">
+        <div className="flex items-baseline justify-between gap-3 py-3">
+          <dt className="font-bold">Monthly fee</dt>
+          <dd className="text-right text-lg font-extrabold text-[#b83e25] [html.dark_&]:text-[#f5a88b]">
+            {formatMoney(tuition.monthlyFee)}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-3 py-3">
+          <dt className="font-bold">Tutor</dt>
+          <dd className={`text-right wrap-break-word ${muted}`}>{tutorName}</dd>
+        </div>
+        <div className="flex justify-between gap-3 py-3">
+          <dt className="font-bold">Learning mode</dt>
+          <dd className={muted}>{tuition.mode}</dd>
+        </div>
+        <div className="flex justify-between gap-3 py-3">
+          <dt className="font-bold">Frequency</dt>
+          <dd className={`text-right ${muted}`}>{tuition.daysPerWeek} days / week</dd>
+        </div>
+      </dl>
+
+      {!authLoading && (
+        !user || !token ? (
+          <Link href={signInHref(tuition.id)} className={`mt-4 w-full ${button}`}>
+            Sign in to apply <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        ) : user.role === 'student' && (
+          <Link href="#apply" className={`mt-4 w-full ${button}`}>
+            Apply for this tuition <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        )
+      )}
+
+      <div className="mt-4 border-t border-[var(--border)] pt-3">
+        <button
+          type="button"
+          onClick={copyLink}
+          className={`inline-flex min-h-9 items-center gap-2 rounded-sm text-sm! font-bold!
+            hover:text-[#b83e25] [html.dark_&]:hover:text-[#f5a88b] ${focus}`}
+        >
+          <Copy size={16} aria-hidden="true" /> Copy tuition link
+        </button>
+        {shareUrl && (
+          <label className="mt-2 grid gap-1.5 text-sm">
+            Copy this link
+            <input readOnly value={shareUrl} onFocus={event => event.target.select()} className={field} />
+          </label>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+function RelatedTuitions({ tuitionId, subject }: { tuitionId: string; subject: string }) {
+  const [items, setItems] = useState<Tuition[] | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const query = new URLSearchParams({ subject, limit: '4' });
+
+    request<PageResult<Tuition & { _id?: string }>>(`/api/tuitions?${query}`, {
+      signal: controller.signal,
+    })
+      .then(data => {
+        if (controller.signal.aborted) return;
+        const related = new Map<string, Tuition>();
+        for (const item of data.items) {
+          const id = item.id || item._id;
+          if (id && id !== tuitionId) related.set(id, { ...item, id });
+        }
+        setItems([...related.values()].slice(0, 3));
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setItems([]);
+      });
+
+    return () => controller.abort();
+  }, [tuitionId, subject]);
+
+  return (
+    <section aria-labelledby="related-title" className="border-t border-[var(--border)] bg-[var(--cream)] py-12 sm:py-16 lg:py-20">
+      <div className="container">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="related-title" className={sectionHeading}>Related tuitions</h2>
+          <Link
+            href={subjectHref(subject)}
+            className={`inline-flex items-center gap-1.5 rounded-sm text-sm font-bold
+              underline-offset-4 hover:underline ${focus}`}
+          >
+            Browse {subject} tuitions <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
+
+        {items === null ? (
+          <div className="mt-6" role="status"><Spinner /><span className="sr-only">Loading related tuitions</span></div>
+        ) : items.length ? (
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[30px]">
+            {items.map(item => <TuitionCard key={item.id} tuition={item} variant="featured" />)}
+          </div>
+        ) : (
+          <p className={`mt-4! ${copy}`}>
+            Explore more listings in the <Link href="/tuitions" className="font-bold underline! underline-offset-4">tuition directory</Link>.
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
