@@ -1,7 +1,6 @@
 <div align="center">
 
 # MentorLagbe: Mentorship Platform
-
 Find the Right Mentor. Learn Faster. Grow with Confidence.MentorLagbe connects learners with experienced mentors for guidance and growth. This repository contains the Next.js web client.
 
 <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,vercel,git,github&perline=7" alt="Tech stack icons" width="420" />
