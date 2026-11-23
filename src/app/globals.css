@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Manrope:wght@400..800&display=swap');
 @import "tailwindcss";
 :root {
     --paper: #fff;
@@ -11,7 +11,14 @@
     --card: #fff;
     --deep: #1e2824;
     --shadow: 0 15px 50px rgba(17, 25, 20, .07)
-}
+;
+    --font-body: 'DM Sans', sans-serif;
+    --font-heading: 'Manrope', sans-serif;
+    --font-size-body: 15px;
+    --font-size-control: 14px;
+    --font-size-caption: 12px;
+    --font-size-page-title: clamp(1.875rem, 3.38vw, 2.875rem);
+    --font-size-panel-title: clamp(1.5rem, 2.5vw, 2rem)}
 
 html.dark {
     --paper: #161c1b;
@@ -36,8 +43,8 @@ body {
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased
 }
@@ -80,7 +87,7 @@ h1,
 h2,
 h3,
 h4 {
-    font-family: 'Manrope', sans-serif;
+    font-family: Manrope,sans-serif !important;
     letter-spacing: -.055em;
     line-height: 1.18
 }
@@ -120,7 +127,7 @@ h3 {
     gap: 8px;
     color: var(--orange);
     font-size: 11px;
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-heading);
     font-weight: 800;
     letter-spacing: .14em;
     text-transform: uppercase
@@ -140,7 +147,7 @@ h3 {
     padding: 14px 23px;
     border: 1px solid transparent;
     border-radius: 5px;
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-heading);
     font-size: 12px;
     font-weight: 800;
     transition: background .2s, transform .2s, border-color .2s, color .2s;
@@ -153,7 +160,8 @@ h3 {
 
 .btn-primary {
     background: var(--orange);
-    color: #fff
+    color: #fff;
+    font-size: 14px;
 }
 
 .btn-primary:hover {
@@ -204,7 +212,7 @@ h3 {
     align-items: center;
     gap: 14px;
     font-size: 13px;
-    font-family: 'Manrope';
+    font-family: var(--font-heading);
     font-weight: 800;
     border-bottom: 1px solid var(--orange);
     padding-bottom: 8px;
@@ -323,11 +331,11 @@ h3 {
 .main-nav {
     display: flex;
     align-items: center;
-    gap: 29px
+    gap: 24px
 }
 
 .nav-link {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     transition: color .2s
 }
@@ -362,7 +370,7 @@ h3 {
 
 .header-login {
     font-weight: 800;
-    font-size: 12px
+    font-size: 15px
 }
 
 .mobile-toggle {
@@ -734,7 +742,7 @@ h3 {
 
 .category-content strong {
     font-size: 20px;
-    font-family: 'Manrope';
+    font-family: var(--font-heading);
     letter-spacing: -.06em;
     line-height: 1.2;
     display: block;
@@ -1186,7 +1194,7 @@ h3 {
 }
 
 .why-top small {
-    font-family: 'Manrope';
+    font-family: var(--font-heading);
     font-size: 11px;
     color: var(--muted)
 }
@@ -2145,12 +2153,14 @@ h3 {
 }
 
 .empty-state h3 {
+    margin: 9px 0;
     font-size: 23px;
-    margin: 9px 0
+    font-weight: 600;
+    letter-spacing: -0.4px;
 }
 
 .empty-state p {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--muted)
 }
 
@@ -2368,7 +2378,7 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    font-size: 12px;
+    font-size: var(--font-size-control);
     font-weight: 800;
     color: var(--ink);
     margin-bottom: 18px
@@ -2384,7 +2394,7 @@ h3 {
     border-radius: 6px;
     color: var(--ink);
     padding: 12px 13px;
-    font-size: 12px;
+    font-size: var(--font-size-body);
     font-weight: 400;
     resize: vertical
 }
@@ -2463,7 +2473,8 @@ h3 {
 .auth-page {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 730px
+    min-height: 730px;
+    font-family: var(--font-body)
 }
 
 .auth-visual {
@@ -2479,16 +2490,23 @@ h3 {
 }
 
 .auth-visual h1 {
-    font-size: clamp(47px, 5.2vw, 74px);
+    font-size: clamp(2.125rem, 8.5vw, 3.5rem);
     margin: 19px 0
 }
 
+@media (min-width: 64rem) {
+    .auth-visual h1 {
+        font-size: clamp(3rem, 5vw, 4.25rem)
+    }
+}
+
 .auth-visual h1 em {
-    color: #e6c7a9
+    color: #e6c7a9;
+    font-family: var(--font-heading)
 }
 
 .auth-visual p {
-    font-size: 15px;
+    font-size: var(--font-size-body);
     line-height: 2;
     max-width: 380px;
     color: #e0e3dd
@@ -2501,7 +2519,7 @@ h3 {
     border-top: 1px solid rgba(255, 255, 255, .3);
     padding-top: 25px;
     margin-top: 85px;
-    font-size: 12px
+    font-size: var(--font-size-caption)
 }
 
 .auth-visual-bottom svg {
@@ -2520,12 +2538,12 @@ h3 {
 }
 
 .auth-form-shell h1 {
-    font-size: 37px;
+    font-size: var(--font-size-page-title);
     margin: 14px 0 10px
 }
 
 .auth-form-shell>p {
-    font-size: 13px;
+    font-size: var(--font-size-body);
     color: var(--muted);
     margin-bottom: 26px
 }
@@ -2561,19 +2579,25 @@ h3 {
 }
 
 .role-selector b {
-    font-size: 12px
+    font-size: var(--font-size-control)
 }
 
 .role-selector small {
     color: var(--muted);
-    font-size: 11px
+    font-size: var(--font-size-caption)
 }
 
 .auth-form label {
     display: block;
-    font-size: 12px;
+    font-size: var(--font-size-control);
     font-weight: 800;
     margin-bottom: 16px
+}
+
+.auth-form .btn,
+.dashboard-layout .btn,
+.status-page .btn {
+    font-size: var(--font-size-control)
 }
 
 .auth-form label>input,
@@ -2588,7 +2612,7 @@ h3 {
     background: var(--paper);
     color: var(--ink);
     font-weight: 400;
-    font-size: 13px
+    font-size: var(--font-size-body)
 }
 
 .auth-form label>input:focus,
@@ -2618,7 +2642,7 @@ h3 {
 }
 
 .switch-auth {
-    font-size: 12px;
+    font-size: var(--font-size-body);
     text-align: center;
     margin-top: 22px
 }
@@ -2637,11 +2661,11 @@ h3 {
 }
 
 .demo-credentials strong {
-    font-size: 11px
+    font-size: var(--font-size-control)
 }
 
 .demo-credentials p {
-    font-size: 11px;
+    font-size: var(--font-size-body);
     color: var(--muted);
     margin: 6px 0 12px
 }
@@ -2662,7 +2686,7 @@ h3 {
     border: 1px solid var(--border);
     padding: 6px 10px;
     border-radius: 5px;
-    font-size: 11px;
+    font-size: var(--font-size-caption);
     font-weight: 800
 }
 
@@ -2744,7 +2768,8 @@ h3 {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 60px 25px
+    padding: 60px 25px;
+    font-family: var(--font-body)
 }
 
 .status-page>div {
@@ -2764,12 +2789,21 @@ h3 {
     margin: 14px 0
 }
 
+.status-page h1 {
+    font-size: var(--font-size-page-title)
+}
+
 .status-page p,
 .notfound p {
     font-size: 14px;
     color: var(--muted);
     line-height: 1.9;
     margin: 15px 0 27px
+}
+
+.status-page p,
+.dashboard-layout .empty-state p {
+    font-size: var(--font-size-body)
 }
 
 .status-icon {
@@ -2814,7 +2848,8 @@ h3 {
     grid-template-columns: 254px minmax(0, 1fr);
     min-height: 710px;
     background: var(--cream);
-    transition: grid-template-columns .2s
+    transition: grid-template-columns .2s;
+    font-family: var(--font-body)
 }
 
 .dashboard-sidebar {
@@ -2835,9 +2870,10 @@ h3 {
 }
 
 .sidebar-heading {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: .14em
+    letter-spacing: .14em;
+    font-family: var(--font-heading)
 }
 
 .sidebar-heading span {
@@ -2865,26 +2901,28 @@ h3 {
 }
 
 .side-user b {
-    font-size: 12px;
+    font-size: var(--font-size-control);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block
+    display: block;
+    font-family: var(--font-heading)
 }
 
 .side-user small {
-    font-size: 11px;
+    font-size: var(--font-size-caption);
     color: var(--muted);
     text-transform: capitalize
 }
 
 .side-group-label {
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: .14em;
     color: var(--muted);
     font-weight: 800;
     padding: 0 12px;
-    margin: 8px 0 10px
+    margin: 8px 0 10px;
+    font-family: var(--font-heading)
 }
 
 .side-nav {
@@ -2899,7 +2937,7 @@ h3 {
     gap: 12px;
     padding: 12px 13px;
     border-radius: 7px;
-    font-size: 12px;
+    font-size: var(--font-size-control);
     font-weight: 700;
     white-space: nowrap
 }
@@ -2930,14 +2968,15 @@ h3 {
 }
 
 .side-bottom>span {
-    font-size: 9px;
+    font-size: 11px;
     color: var(--orange);
-    font-weight: 800
+    font-weight: 800;
+    font-family: var(--font-heading)
 }
 
 .side-bottom p {
     margin: 8px 0 17px;
-    font: 800 15px/1.55 'Manrope';
+    font: 800 16px/1.55 var(--font-heading);
     letter-spacing: -.04em
 }
 
@@ -2947,7 +2986,7 @@ h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 11px;
+    font-size: var(--font-size-control);
     font-weight: 800;
     color: var(--muted)
 }
@@ -2978,7 +3017,7 @@ h3 {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 11px
+    font-size: var(--font-size-control)
 }
 
 .dash-breadcrumb b {
@@ -2987,17 +3026,19 @@ h3 {
 }
 
 .topbar-plan {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
-    color: var(--orange)
+    color: var(--orange);
+    font-family: var(--font-heading)
 }
 
 .topbar-upgrade {
-    font-size: 11px;
+    font-size: var(--font-size-control);
     font-weight: 800;
     display: flex;
     align-items: center;
-    gap: 7px
+    gap: 7px;
+    font-family: var(--font-heading)
 }
 
 .dash-mobile-button {
@@ -3022,12 +3063,12 @@ h3 {
 }
 
 .dashboard-page-title h1 {
-    font-size: 32px;
+    font-size: var(--font-size-page-title);
     margin: 9px 0
 }
 
 .dashboard-page-title p {
-    font-size: 12px;
+    font-size: var(--font-size-body);
     color: var(--muted)
 }
 
@@ -3049,19 +3090,19 @@ h3 {
 }
 
 .dash-welcome span {
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: .13em;
     color: #e2b9a9;
     font-weight: 800
 }
 
 .dash-welcome h2 {
-    font-size: 28px;
+    font-size: var(--font-size-panel-title);
     margin: 9px 0
 }
 
 .dash-welcome p {
-    font-size: 12px;
+    font-size: var(--font-size-body);
     color: #cdd7cf;
     margin-bottom: 17px
 }
@@ -3099,13 +3140,13 @@ h3 {
 }
 
 .stat-card strong {
-    font: 800 28px 'Manrope';
+    font: 800 28px var(--font-heading);
     letter-spacing: -.055em
 }
 
 .stat-card>span:last-child {
     color: var(--muted);
-    font-size: 11px
+    font-size: var(--font-size-caption)
 }
 
 .dash-two-col {
@@ -3122,12 +3163,12 @@ h3 {
 }
 
 .dash-box h3 {
-    font-size: 19px;
+    font-size: 20px;
     margin-bottom: 9px
 }
 
 .dash-box>p {
-    font-size: 12px;
+    font-size: var(--font-size-body);
     color: var(--muted);
     margin-bottom: 23px
 }
@@ -3138,7 +3179,7 @@ h3 {
     justify-content: space-between;
     border-top: 1px solid var(--border);
     padding: 17px 0;
-    font-size: 12px;
+    font-size: var(--font-size-control);
     font-weight: 800
 }
 
@@ -3159,7 +3200,7 @@ h3 {
 }
 
 .learning-note-box h3 {
-    font: 500 34px/1.35 'Fraunces';
+    font: 500 20px/1.35 var(--font-heading);
     max-width: 340px;
     margin: 17px 0
 }
@@ -3170,7 +3211,7 @@ h3 {
 }
 
 .learning-note-box>div {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--orange);
     letter-spacing: .1em;
     font-weight: 800;
@@ -3207,7 +3248,7 @@ thead {
 
 th {
     padding: 17px 18px;
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     letter-spacing: .07em;
     text-transform: uppercase;
     color: var(--muted)
@@ -3216,20 +3257,20 @@ th {
 td {
     padding: 17px 18px;
     border-top: 1px solid var(--border);
-    font-size: 12px;
+    font-size: var(--font-size-control);
     vertical-align: middle
 }
 
 td small {
     display: block;
     color: var(--muted);
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     margin-top: 4px
 }
 
 .row-strong {
     font-weight: 800;
-    font-size: 12px;
+    font-size: var(--font-size-control);
     display: block
 }
 
@@ -3242,7 +3283,7 @@ td small {
     align-items: center;
     border-radius: 20px;
     padding: 5px 10px;
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     font-weight: 800;
     background: #f0eee9;
     color: #59615b;
@@ -3297,7 +3338,7 @@ td small {
     padding: 7px 9px;
     background: var(--paper);
     color: var(--ink);
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     font-weight: 800;
     display: inline-flex;
     align-items: center;
@@ -3324,11 +3365,15 @@ td small {
     background: var(--card);
     color: var(--ink);
     border-radius: 6px;
-    font-size: 11px
+    font-size: var(--font-size-control)
 }
 
 .dashboard-cards {
     grid-template-columns: repeat(3, 1fr)
+}
+
+.dashboard-cards .tuition-level {
+    font-size: var(--font-size-control)
 }
 
 .applicant-grid {
@@ -3356,11 +3401,11 @@ td small {
 }
 
 .applicant-head h3 {
-    font-size: 15px
+    font-size: 18px
 }
 
 .applicant-head small {
-    font-size: 11px;
+    font-size: var(--font-size-caption);
     color: var(--muted)
 }
 
@@ -3372,7 +3417,7 @@ td small {
 }
 
 .applicant-info p {
-    font-size: 12px;
+    font-size: var(--font-size-body);
     margin-bottom: 10px;
     line-height: 1.65
 }
@@ -3384,7 +3429,7 @@ td small {
 .applicant-info b {
     display: block;
     color: var(--muted);
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     text-transform: uppercase;
     letter-spacing: .08em
 }
@@ -3442,11 +3487,11 @@ td small {
 }
 
 .upload-widget strong {
-    font-size: 12px
+    font-size: var(--font-size-control)
 }
 
 .upload-widget small {
-    font-size: 10px;
+    font-size: var(--font-size-caption);
     color: var(--muted)
 }
 
@@ -3475,7 +3520,7 @@ td small {
 
 .form-actions>span {
     color: var(--muted);
-    font-size: 11px;
+    font-size: var(--font-size-caption);
     display: flex;
     gap: 7px;
     align-items: center
@@ -3513,7 +3558,7 @@ td small {
 }
 
 .modal-head h2 {
-    font-size: 27px
+    font-size: 24px
 }
 
 .modal-head button {
@@ -3551,12 +3596,12 @@ td small {
 }
 
 .profile-photo-edit b {
-    font-size: 13px
+    font-size: var(--font-size-control)
 }
 
 .profile-photo-edit p {
     color: var(--muted);
-    font-size: 11px;
+    font-size: var(--font-size-body);
     margin: 4px 0 13px
 }
 
@@ -3566,7 +3611,7 @@ td small {
     gap: 7px;
     position: relative;
     color: var(--orange);
-    font-size: 11px;
+    font-size: var(--font-size-caption);
     font-weight: 800;
     cursor: pointer
 }
@@ -4394,12 +4439,7 @@ td small {
     }
 
     .auth-visual h1 {
-        font-size: 45px;
         margin: 10px 0
-    }
-
-    .auth-visual p {
-        font-size: 12px
     }
 
     .auth-visual-bottom {
@@ -4408,10 +4448,6 @@ td small {
 
     .auth-form-side {
         padding: 46px 22px
-    }
-
-    .auth-form-shell h1 {
-        font-size: 31px
     }
 
     .steps-grid {
@@ -4453,20 +4489,12 @@ td small {
         display: block
     }
 
-    .dashboard-page-title h1 {
-        font-size: 27px
-    }
-
     .dashboard-page-title>.btn {
         margin-top: 18px
     }
 
     .dash-welcome {
         padding: 26px 20px
-    }
-
-    .dash-welcome h2 {
-        font-size: 24px
     }
 
     .welcome-decor {
@@ -4536,7 +4564,7 @@ td small {
 }
 
 .priority-student {
-    font: 800 10px 'DM Sans';
+    font: 800 var(--font-size-caption) var(--font-body);
     letter-spacing: 0;
     background: #fdf1d8;
     color: #a56d15;

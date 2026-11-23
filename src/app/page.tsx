@@ -277,7 +277,7 @@ export default function Home() {
             <Link
               href="/how-it-works"
               className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-bold
-                text-[#54697f]! transition-[background-color,transform] hover:bg-[#f4ede7] focus-visible:outline-2
+                text-[#262626]! transition-[background-color,transform] hover:bg-[#f4ede7] focus-visible:outline-2
                 focus-visible:outline-offset-4 focus-visible:outline-white motion-safe:hover:-translate-y-0.5
                 sm:min-w-[176px] sm:px-6 sm:text-[15px]"
             >
