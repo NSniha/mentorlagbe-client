@@ -25,20 +25,9 @@ Find the Right Mentor. Learn Faster. Grow with Confidence.MentorLagbe connects l
 
 ---
 
-## Table of Contents
+## Preview
 
-- [Overview](#overview)
-- [Live Demo](#live-demo)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Available Scripts](#available-scripts)
-- [Project Structure](#project-structure)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Author](#author)
+<img width="1280" height="800" alt="preview" src="https://github.com/user-attachments/assets/9926dc7e-e4b6-4792-b9cc-2da11fc8b404" />
 
 ---
 
