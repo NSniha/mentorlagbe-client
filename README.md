@@ -1,6 +1,6 @@
 <div align="center">
 
-# MentorLagbe: Mentorship Platform
+# MentorLagb | Mentorship Platform
 
 Find the Right Mentor. Learn Faster. Grow with Confidence.MentorLagbe connects learners with experienced mentors for guidance and growth. This repository contains the Next.js web client.
 
