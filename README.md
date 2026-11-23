@@ -8,7 +8,19 @@
 
 <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,vercel,git,github&perline=7" alt="Tech stack icons" width="420" />
 
-[Live Demo](https://mentorlagbe-client-eight.vercel.app) | [Report a Bug](https://github.com/NSniha/mentorlagbe-client/issues) | [Request a Feature](https://github.com/NSniha/mentorlagbe-client/issues)
+<br />
+
+<a href="https://mentorlagbe-client-eight.vercel.app">
+  <img src="https://img.shields.io/badge/Live_Demo-View_Project-0F766E?style=for-the-badge&labelColor=1F2937&logo=vercel&logoColor=white" alt="Live Demo" />
+</a>
+&nbsp;
+<a href="https://github.com/NSniha/mentorlagbe-client/issues/new">
+  <img src="https://img.shields.io/badge/Report-a_Bug-DC2626?style=for-the-badge&labelColor=1F2937&logo=github&logoColor=white" alt="Report a Bug" />
+</a>
+&nbsp;
+<a href="https://github.com/NSniha/mentorlagbe-client/issues/new">
+  <img src="https://img.shields.io/badge/Request-a_Feature-2563EB?style=for-the-badge&labelColor=1F2937&logo=github&logoColor=white" alt="Request a Feature" />
+</a>
 
 </div>
 
