@@ -887,7 +887,7 @@ export default function Home() {
             className="flex flex-col items-center gap-2.5 pb-6 text-center"
           >
             <p className="text-[11px] leading-4 font-extrabold tracking-[0.12em] text-[#ed603e]">
-              [ EXPLORE SUBJECTS ]
+              <span aria-hidden="true" className="text-base leading-none">✳</span> EXPLORE SUBJECTS 
             </p>
 
             <h2

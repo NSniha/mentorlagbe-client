@@ -58,7 +58,7 @@ const focus =
   'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--orange)]';
 const button =
   `inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[var(--orange)]
-    px-5 py-2.5 text-center text-sm! font-bold! text-[#24160f]! transition-colors
+    px-5 py-2.5 text-center text-sm! font-bold! text-white! transition-colors
     hover:bg-[#f47758] disabled:cursor-not-allowed ${focus}`;
 const field =
   'w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-3.5 py-2.5 text-[15px]! font-normal! placeholder:text-[var(--muted)] focus:border-[var(--orange)] focus:outline-none';
@@ -107,11 +107,11 @@ function ApplicationPanel({
       {authLoading ? (
         <p role="status" className={`mt-3! ${copy}`}>Checking your sign-in status…</p>
       ) : !user || !token ? (
-        <div className="mt-3 space-y-4">
+        <div className="mt-3">
           <p className={copy}>Sign in as a student to send an application.</p>
           <Link
             href={signInHref(tuition.id)}
-            className={`w-full ${button}`}
+            className={`mt-4 ${button}`}
           >
             Sign in to apply <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
@@ -126,7 +126,7 @@ function ApplicationPanel({
           <CheckCircle2 size={26} aria-hidden="true" className="text-[var(--orange)]" />
           <h3 className="mt-2! text-base! font-bold">Application sent</h3>
           <p className={`mt-1! ${copy}`}>Your application is pending tutor review.</p>
-          <Link href="/dashboard/student/my-applications" className={`mt-4 w-full ${button}`}>
+          <Link href="/dashboard/student/my-applications" className={`mt-4 ${button}`}>
             View application <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
         </div>
@@ -171,7 +171,7 @@ function ApplicationPanel({
               className={`resize-y ${field}`}
             />
           </label>
-          <button type="submit" disabled={status === 'sending'} className={`w-full ${button}`}>
+          <button type="submit" disabled={status === 'sending'} className={`mt-1 justify-self-start ${button}`}>
             {status === 'sending' ? 'Sending…' : 'Apply for this tuition'}
             <ArrowUpRight size={16} aria-hidden="true" />
           </button>
@@ -350,7 +350,7 @@ function TuitionDetailsView({ id }: { id: string }) {
                   className={`inline-flex min-h-10 items-center rounded-full border border-[var(--border)]
                     px-4 text-sm! font-bold! transition-colors hover:border-[var(--orange)] sm:px-6
                     aria-selected:border-[var(--orange)] aria-selected:bg-[var(--orange)]
-                    aria-selected:text-[#24160f] ${focus}`}
+                    aria-selected:text-white! ${focus}`}
                 >
                   {tabLabel}
                 </button>

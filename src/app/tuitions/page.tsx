@@ -284,8 +284,7 @@ function BrowseInner() {
           ) : result.items.length ? (
             <div
               className={layout === 'grid'
-                ? `grid grid-cols-1 gap-5 sm:grid-cols-4 xl:gap-6
-                  sm:[&>article]:col-span-2 sm:[&>article:last-child:nth-child(odd)]:col-start-2`
+                ? 'grid grid-cols-1 gap-5 sm:grid-cols-2 xl:gap-6'
                 : `grid grid-cols-1 gap-5
                   sm:[&>article]:grid sm:[&>article]:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]
                   sm:[&>article>div:first-child]:aspect-auto sm:[&>article>div:first-child]:min-h-56
