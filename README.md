@@ -1,16 +1,12 @@
 <div align="center">
 
-# MentorLagbe Client
+# MentorLagbe: Mentorship Platform
 
-**The web client for MentorLagbe, a mentorship platform that helps learners find and connect with mentors.**
+### Find the Right Mentor. Learn Faster. Grow with Confidence.
 
-![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
-![Better Auth](https://img.shields.io/badge/Better_Auth-1F1F1F?style=flat-square)
-![Motion](https://img.shields.io/badge/Motion-0055FF?style=flat-square&logo=framer&logoColor=white)
-![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)
+**MentorLagbe connects learners with experienced mentors for guidance and growth. This repository contains the Next.js web client.**
+
+<img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,vercel,git,github&perline=7" alt="Tech stack icons" width="420" />
 
 [Live Demo](https://mentorlagbe-client-eight.vercel.app) | [Report a Bug](https://github.com/NSniha/mentorlagbe-client/issues) | [Request a Feature](https://github.com/NSniha/mentorlagbe-client/issues)
 
@@ -59,6 +55,10 @@ The application is deployed on Vercel:
 - **Environment-driven API configuration**, so the same build can target local, staging or production backends.
 
 ## Tech Stack
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind,nodejs,npm,vercel,git,github&perline=9" alt="Technologies used in MentorLagbe Client" width="560" />
+</p>
 
 | Category | Technology | Purpose |
 | --- | --- | --- |
